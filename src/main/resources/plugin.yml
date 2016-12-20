@@ -1,0 +1,8 @@
+name: Holo
+version: ${project.version}
+main: tech.shadowsystems.holo.Holo
+authors: [Shadow Technical Systems LLC]
+website: www.shadowsystems.tech
+commands:
+  holo:
+    description: The main command for the Holo plugin.

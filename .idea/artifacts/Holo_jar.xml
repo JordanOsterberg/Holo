@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Holo:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Holo_jar</output-path>
+    <root id="archive" name="Holo.jar">
+      <element id="module-output" name="Holo" />
+    </root>
+  </artifact>
+</component>
