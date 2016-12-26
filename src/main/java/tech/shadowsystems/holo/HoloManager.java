@@ -27,7 +27,7 @@ public class HoloManager {
 
     public Hologram search(ArmorStand armorStand) {
         for (Hologram hologram : hologramSet) {
-            if (hologram.getPhsyicalEntities().contains(armorStand)) {
+            if (hologram.getPhysicalEntities().contains(armorStand)) {
                 return hologram;
             }
         }

@@ -18,7 +18,7 @@ import java.util.List;
 public class Hologram {
 
     private String name;
-    private List<ArmorStand> phsyicalEntities;
+    private List<ArmorStand> physicalEntities;
     private List<String> content;
     private List<String> commands;
     private Location hologramLocation;
@@ -26,7 +26,7 @@ public class Hologram {
     public Hologram(String name, Location location, String content) { // This is for new holograms
         this.name = name;
         this.content = new ArrayList<>();
-        this.phsyicalEntities = new ArrayList<>();
+        this.physicalEntities = new ArrayList<>();
         this.commands = new ArrayList<>();
 
         this.content.add(content);
@@ -36,7 +36,7 @@ public class Hologram {
 
     public Hologram(String name) { // This is for pre-existing ones
         this.name = name;
-        this.phsyicalEntities = new ArrayList<>();
+        this.physicalEntities = new ArrayList<>();
         this.commands = new ArrayList<>();
 
         this.commands = FileUtil.getInstance().getDataConfig().getStringList("holograms." + getName() + ".commands");
@@ -80,7 +80,7 @@ public class Hologram {
             phsyicalEntity.setCustomNameVisible(true);
             phsyicalEntity.setCustomName(ChatUtil.format(str));
             phsyicalEntity.setInvulnerable(true);
-            phsyicalEntities.add(phsyicalEntity);
+            physicalEntities.add(phsyicalEntity);
         }
     }
 
@@ -131,7 +131,7 @@ public class Hologram {
 
         FileUtil.getInstance().saveData();
 
-        for (ArmorStand armorStand : getPhsyicalEntities()) {
+        for (ArmorStand armorStand : getPhysicalEntities()) {
             armorStand.remove();
         }
     }
@@ -144,8 +144,8 @@ public class Hologram {
         this.name = name;
     }
 
-    public List<ArmorStand> getPhsyicalEntities() {
-        return phsyicalEntities;
+    public List<ArmorStand> getPhysicalEntities() {
+        return physicalEntities;
     }
 
     public void addCommand(String command) {
@@ -153,7 +153,7 @@ public class Hologram {
     }
 
     public void remove() {
-        for (ArmorStand armorStand : getPhsyicalEntities()) {
+        for (ArmorStand armorStand : getPhysicalEntities()) {
             armorStand.remove();
         }
     }
