@@ -5,41 +5,57 @@
 package tech.shadowsystems.holo.api;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import tech.shadowsystems.holo.HoloManager;
 import tech.shadowsystems.holo.utilties.ChatUtil;
 import tech.shadowsystems.holo.utilties.FileUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Hologram {
 
     private String name;
-    private ArmorStand phsyicalEntity;
+    private List<ArmorStand> phsyicalEntities;
     private List<String> content;
     private List<String> commands;
+    private Location hologramLocation;
 
-    public Hologram(String name, Location location, List<String> content) { // This is for new holograms
+    public Hologram(String name, Location location, String content) { // This is for new holograms
         this.name = name;
-        this.content = content;
+        this.content = new ArrayList<>();
+        this.phsyicalEntities = new ArrayList<>();
+        this.commands = new ArrayList<>();
+
+        this.content.add(content);
 
         spawn(location);
     }
 
     public Hologram(String name) { // This is for pre-existing ones
         this.name = name;
+        this.phsyicalEntities = new ArrayList<>();
+        this.commands = new ArrayList<>();
 
         this.commands = FileUtil.getInstance().getDataConfig().getStringList("holograms." + getName() + ".commands");
-        this.content = FileUtil.getInstance().getDataConfig().getStringList("holograms." + getName() + ".content");
 
-        double x = FileUtil.getInstance().getDataConfig().getDouble("holograms." + getName() + ".location.x");;
-        double y = FileUtil.getInstance().getDataConfig().getDouble("holograms." + getName() + ".location.y");;
-        double z = FileUtil.getInstance().getDataConfig().getDouble("holograms." + getName() + ".location.z");;
-        float yaw = FileUtil.getInstance().getDataConfig().getInt("holograms." + getName() + ".location.yaw");;
-        float pitch = FileUtil.getInstance().getDataConfig().getInt("holograms." + getName() + ".location.pitch");;
-        String worldName = FileUtil.getInstance().getDataConfig().getString("holograms." + getName() + ".location.world");;
+        this.content = new ArrayList<>();
+
+        for (String key : FileUtil.getInstance().getDataConfig().getConfigurationSection("holograms." + getName() + ".content").getKeys(false)) {
+            String contentValue = FileUtil.getInstance().getDataConfig().getString("holograms." + getName() + ".content." + key);
+            this.content.add(ChatUtil.format(contentValue));
+        }
+
+        double x = FileUtil.getInstance().getDataConfig().getDouble("holograms." + getName() + ".location.x");
+        double y = FileUtil.getInstance().getDataConfig().getDouble("holograms." + getName() + ".location.y");
+        double z = FileUtil.getInstance().getDataConfig().getDouble("holograms." + getName() + ".location.z");
+        float yaw = FileUtil.getInstance().getDataConfig().getInt("holograms." + getName() + ".location.yaw");
+        float pitch = FileUtil.getInstance().getDataConfig().getInt("holograms." + getName() + ".location.pitch");
+        String worldName = FileUtil.getInstance().getDataConfig().getString("holograms." + getName() + ".location.world");
 
         World world = Bukkit.getWorld(worldName);
 
@@ -52,12 +68,22 @@ public class Hologram {
     }
 
     private void spawn(Location location) {
-        this.phsyicalEntity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        this.phsyicalEntity.setVisible(false);
-        this.phsyicalEntity.setGravity(false);
-        this.phsyicalEntity.setCustomNameVisible(true);
-        this.phsyicalEntity.setCustomName(ChatUtil.format(ChatUtil.convertIntoStringWithNewLines(content)));
-        this.phsyicalEntity.setInvulnerable(true);
+        this.hologramLocation = location;
+
+        int cycle = 0;
+        for (String str : content) {
+            cycle++;
+            if (cycle == 2) {
+                location = location.subtract(0, 0.3, 0);
+            }
+            ArmorStand phsyicalEntity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+            phsyicalEntity.setVisible(false);
+            phsyicalEntity.setGravity(false);
+            phsyicalEntity.setCustomNameVisible(true);
+            phsyicalEntity.setCustomName(ChatUtil.format(str));
+            phsyicalEntity.setInvulnerable(true);
+            phsyicalEntities.add(phsyicalEntity);
+        }
     }
 
     public boolean isTouchscreen() {
@@ -75,9 +101,10 @@ public class Hologram {
 
         for (String command : commands) {
             if (user.isPlayer()) {
-                user.accessPlayer().sendMessage("/" + command.replaceAll("%player%", user.accessPlayer().getName()));
-            } else {
-                user.getCommandSender().sendMessage("/" + command);
+                boolean status = user.accessPlayer().performCommand("/" + command.replaceAll("%player%", user.accessPlayer().getName()));
+                if (!status) {
+                    user.sendMessageWithPrefix("&cFailed to run command " + command);
+                }
             }
         }
     }
@@ -87,7 +114,7 @@ public class Hologram {
     }
 
     public void serialize() {
-        Location location = this.phsyicalEntity.getLocation();
+        Location location = this.hologramLocation;
 
         /* LOCATION */
         FileUtil.getInstance().getDataConfig().set("holograms." + getName() + ".location.world", location.getWorld().getName());
@@ -99,8 +126,16 @@ public class Hologram {
 
         /* LISTS */
         FileUtil.getInstance().getDataConfig().set("holograms." + getName() + ".commands", commands);
-        FileUtil.getInstance().getDataConfig().set("holograms." + getName() + ".content", content);
 
+        for (int x = 0; x < content.size(); x++) {
+            FileUtil.getInstance().getDataConfig().set("holograms." + getName() + ".content." + x, String.valueOf(content.get(x)));
+        }
+
+        FileUtil.getInstance().saveData();
+
+        for (ArmorStand armorStand : getPhsyicalEntities()) {
+            armorStand.remove();
+        }
     }
 
     public String getName() {
@@ -111,11 +146,33 @@ public class Hologram {
         this.name = name;
     }
 
-    public ArmorStand getPhsyicalEntity() {
-        return phsyicalEntity;
+    public List<ArmorStand> getPhsyicalEntities() {
+        return phsyicalEntities;
     }
 
     public void addCommand(String command) {
         commands.add(command);
+    }
+
+    public void remove() {
+        for (ArmorStand armorStand : getPhsyicalEntities()) {
+            armorStand.remove();
+        }
+    }
+
+    public Location getLocation() {
+        return hologramLocation;
+    }
+
+    public void setLocation(Location location) {
+        this.hologramLocation = location;
+        this.remove();
+        this.spawn(location);
+    }
+
+    public void addLine(String line) {
+        content.add(ChatUtil.format(line));
+        this.remove();
+        this.spawn(this.getLocation());
     }
 }

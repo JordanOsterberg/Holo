@@ -4,10 +4,7 @@
 
 package tech.shadowsystems.holo.commands;
 
-import tech.shadowsystems.holo.commands.subcommands.CreateSubCommand;
-import tech.shadowsystems.holo.commands.subcommands.HelpSubCommand;
-import tech.shadowsystems.holo.commands.subcommands.RemoveSubCommand;
-import tech.shadowsystems.holo.commands.subcommands.TouchSubCommand;
+import tech.shadowsystems.holo.commands.subcommands.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +21,10 @@ public class SubCommandManager {
         subCommands.put("create", new CreateSubCommand());
         subCommands.put("touch", new TouchSubCommand());
         subCommands.put("remove", new RemoveSubCommand());
+        subCommands.put("movehere", new MoveHereSubCommand());
+        subCommands.put("goto", new GotoSubCommand());
+        subCommands.put("list", new ListSubCommand());
+        subCommands.put("addline", new AddLineSubcommand());
     }
 
     private Map<String, SubCommand> subCommands = new HashMap<>();

@@ -18,12 +18,18 @@ public class Holo extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdir();
+        }
+
         getCommand("holo").setExecutor(new HoloCommand());
         getServer().getPluginManager().registerEvents(new TouchscreenListener(), this);
 
-        for (String hologramName : FileUtil.getInstance().getDataConfig().getConfigurationSection("holograms").getKeys(false)) {
-            Hologram hologram = new Hologram(hologramName);
-            HoloManager.getInstance().getHologramSet().add(hologram);
+        if (FileUtil.getInstance().getDataConfig().getConfigurationSection("holograms") != null) {
+            for (String hologramName : FileUtil.getInstance().getDataConfig().getConfigurationSection("holograms").getKeys(false)) {
+                Hologram hologram = new Hologram(hologramName);
+                HoloManager.getInstance().getHologramSet().add(hologram);
+            }
         }
     }
 

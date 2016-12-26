@@ -8,6 +8,7 @@ import tech.shadowsystems.holo.HoloManager;
 import tech.shadowsystems.holo.api.HoloUser;
 import tech.shadowsystems.holo.api.Hologram;
 import tech.shadowsystems.holo.commands.SubCommand;
+import tech.shadowsystems.holo.utilties.FileUtil;
 
 public class RemoveSubCommand extends SubCommand {
 
@@ -20,7 +21,9 @@ public class RemoveSubCommand extends SubCommand {
         Hologram hologram = HoloManager.getInstance().search(args[0]);
         if (hologram != null) {
             HoloManager.getInstance().getHologramSet().remove(hologram);
-            hologram.getPhsyicalEntity().remove();
+            hologram.remove();
+            FileUtil.getInstance().getDataConfig().set("holograms." + args[0].toLowerCase(), null);
+            FileUtil.getInstance().saveData();
             user.sendMessageWithPrefix("&aHologram " + args[0] + " deleted.");
         } else {
             user.sendMessageWithPrefix("&cThat hologram doesn't exist.");

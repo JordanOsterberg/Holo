@@ -5,6 +5,7 @@
 package tech.shadowsystems.holo.utilties;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 import java.util.List;
 
@@ -38,4 +39,7 @@ public class ChatUtil {
         return str;
     }
 
+    public static String format(Location location) {
+        return location.getBlockX() + "/" + location.getBlockY() + "/" + location.getBlockZ();
+    }
 }

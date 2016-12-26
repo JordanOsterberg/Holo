@@ -33,16 +33,20 @@ public class CreateSubCommand extends SubCommand {
             return;
         }
 
-        List<String> list = new ArrayList<>();
+        String line = "";
         for (String string : args) {
             if (string.equals(name)) {
                 continue;
             }
 
-            list.add(string);
+            if (line.equals("")) {
+                line = string;
+            } else {
+                line = line + " " + string;
+            }
         }
 
-        Hologram hologram = new Hologram(name, user.accessPlayer().getLocation(), list);
+        Hologram hologram = new Hologram(name.toLowerCase(), user.accessPlayer().getLocation(), line);
         HoloManager.getInstance().getHologramSet().add(hologram);
         user.sendMessageWithPrefix("&aCreated hologram " + name + " at your location.");
     }

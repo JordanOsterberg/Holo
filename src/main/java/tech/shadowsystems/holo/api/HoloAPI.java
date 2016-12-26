@@ -5,6 +5,8 @@
 package tech.shadowsystems.holo.api;
 
 import org.bukkit.Location;
+import tech.shadowsystems.holo.HoloManager;
+import tech.shadowsystems.holo.utilties.FileUtil;
 
 import java.util.List;
 
@@ -16,12 +18,22 @@ public class HoloAPI {
         return instance;
     }
 
-    public Hologram createHologram(String name, Location location, List<String> content) {
+    public Hologram createHologram(String name, Location location, String content) {
         return new Hologram(name, location, content);
     }
 
     public void deleteHologram(String name) {
-        // todo
+        Hologram hologram = HoloManager.getInstance().search(name);
+        if (hologram != null) {
+            HoloManager.getInstance().getHologramSet().remove(hologram);
+            FileUtil.getInstance().getDataConfig().set("holograms." + name.toLowerCase(), null);
+            FileUtil.getInstance().saveData();
+            hologram.remove();
+        }
+    }
+
+    public Hologram getHologram(String name) {
+        return HoloManager.getInstance().search(name);
     }
 
 }
