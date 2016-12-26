@@ -5,12 +5,10 @@
 package tech.shadowsystems.holo.api;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
-import tech.shadowsystems.holo.HoloManager;
 import tech.shadowsystems.holo.utilties.ChatUtil;
 import tech.shadowsystems.holo.utilties.FileUtil;
 
