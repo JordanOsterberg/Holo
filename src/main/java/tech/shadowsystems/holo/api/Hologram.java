@@ -71,16 +71,16 @@ public class Hologram {
         int cycle = 0;
         for (String str : content) {
             cycle++;
-            if (cycle == 2) {
+            if (cycle > 1) {
                 location = location.subtract(0, 0.3, 0);
             }
-            ArmorStand phsyicalEntity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-            phsyicalEntity.setVisible(false);
-            phsyicalEntity.setGravity(false);
-            phsyicalEntity.setCustomNameVisible(true);
-            phsyicalEntity.setCustomName(ChatUtil.format(str));
-            phsyicalEntity.setInvulnerable(true);
-            physicalEntities.add(phsyicalEntity);
+            ArmorStand physicalEntity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+            physicalEntity.setVisible(false);
+            physicalEntity.setGravity(false);
+            physicalEntity.setCustomNameVisible(true);
+            physicalEntity.setCustomName(ChatUtil.format(str));
+            physicalEntity.setInvulnerable(true);
+            physicalEntities.add(physicalEntity);
         }
     }
 
@@ -105,10 +105,6 @@ public class Hologram {
                 }
             }
         }
-    }
-
-    public String contentAsString() {
-        return ChatUtil.format(ChatUtil.convertIntoStringWithNewLines(getContent()));
     }
 
     public void serialize() {
